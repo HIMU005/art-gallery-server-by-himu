@@ -70,6 +70,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/crafts/:email", async (req, res) => {
+      const email = req.params.email;
+      const cursor = await craftCollection.find({ email });
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // await client.db("admin").command({ ping: 1 });
     // console.log(
     //   "Pinged your deployment. You successfully connected to MongoDB!"
