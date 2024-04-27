@@ -25,6 +25,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const userCollection = client.db("craft").collection("users");
+    const craftCollection = client.db("craft").collection("crafts");
 
     app.post("/users", async (req, res) => {
       const newUser = req.body;
@@ -53,6 +54,19 @@ async function run() {
         },
       };
       const result = await userCollection.updateOne(filter, updateOne, options);
+      res.send(result);
+    });
+
+    app.post("/crafts", async (req, res) => {
+      const newCraft = req.body;
+      console.log(newCraft);
+      const result = await craftCollection.insertOne(newCraft);
+      res.send(result);
+    });
+
+    app.get("/crafts", async (req, res) => {
+      const cursor = craftCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
