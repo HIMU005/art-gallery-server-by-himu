@@ -39,13 +39,6 @@ async function run() {
       res.send(result);
     });
 
-    // app.get("/crafts/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) };
-    //   const result = await craftCollection.findOne(query);
-    //   res.send(result);
-    // });
-
     app.get("/crafts/:email", async (req, res) => {
       const email = req.params.email;
       const cursor = craftCollection.find({ email });
@@ -57,6 +50,33 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await craftCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.put("/crafts-info/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateData = req.body;
+      const updateDatabase = {
+        $set: {
+          email: updateData.email,
+          image: updateData.image,
+          item_name: updateData.item_name,
+          subcategory_Name: updateData.subcategory_Name,
+          short_description: updateData.short_description,
+          price: updateData.price,
+          rating: updateData.rating,
+          customization: updateData.customization,
+          processing_time: updateData.processing_time,
+          stockStatus: updateData.stockStatus,
+        },
+      };
+      const result = await craftCollection.updateOne(
+        filter,
+        updateDatabase,
+        options
+      );
       res.send(result);
     });
 
