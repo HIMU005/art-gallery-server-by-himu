@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -24,38 +24,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const userCollection = client.db("craft").collection("users");
     const craftCollection = client.db("craft").collection("crafts");
-
-    app.post("/users", async (req, res) => {
-      const newUser = req.body;
-      console.log(newUser);
-      const result = await userCollection.insertOne(newUser);
-      res.send(result);
-    });
-
-    app.get("/users", async (req, res) => {
-      const cursor = userCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-    });
-    // app.get("users/");
-
-    app.put("/users", async (req, res) => {
-      const updatedUser = req.body;
-
-      filter = { email: updatedUser.email };
-      const options = { upsert: true };
-      const newUpdate = {
-        $set: {
-          name: updatedUser.displayName,
-          email: updatedUser.email,
-          photo: updatedUser.photoURL,
-        },
-      };
-      const result = await userCollection.updateOne(filter, updateOne, options);
-      res.send(result);
-    });
 
     app.post("/crafts", async (req, res) => {
       const newCraft = req.body;
@@ -70,10 +39,24 @@ async function run() {
       res.send(result);
     });
 
+    // app.get("/crafts/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await craftCollection.findOne(query);
+    //   res.send(result);
+    // });
+
     app.get("/crafts/:email", async (req, res) => {
       const email = req.params.email;
-      const cursor = await craftCollection.find({ email });
+      const cursor = craftCollection.find({ email });
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/crafts-info/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await craftCollection.findOne(query);
       res.send(result);
     });
 
