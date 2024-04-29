@@ -25,10 +25,16 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const craftCollection = client.db("craft").collection("crafts");
+    const categoryCollection = client.db("craft").collection("Category");
+
+    app.get("/category", async (req, res) => {
+      const cursor = categoryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     app.post("/crafts", async (req, res) => {
       const newCraft = req.body;
-      console.log(newCraft);
       const result = await craftCollection.insertOne(newCraft);
       res.send(result);
     });
@@ -41,7 +47,7 @@ async function run() {
 
     app.get("/crafts/:email", async (req, res) => {
       const email = req.params.email;
-      const cursor = craftCollection.find({ email });
+      const cursor = craftCollection.find({ email: email });
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -50,6 +56,15 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await craftCollection.findOne(query);
+      res.send(result);
+    });
+    app.get("/crafts-cat/:subcategoryName", async (req, res) => {
+      const subcategoryName = req.params.subcategoryName;
+      // const cursor = craftCollection.find({ subcategoryName });
+      const cursor = craftCollection.find({
+        subcategory_Name: subcategoryName,
+      });
+      const result = await cursor.toArray();
       res.send(result);
     });
 
