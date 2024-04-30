@@ -26,6 +26,7 @@ async function run() {
   try {
     const craftCollection = client.db("craft").collection("crafts");
     const categoryCollection = client.db("craft").collection("Category");
+    const feedBackCollection = client.db("craft").collection("feedback");
 
     app.get("/category", async (req, res) => {
       const cursor = categoryCollection.find();
@@ -36,6 +37,12 @@ async function run() {
     app.post("/crafts", async (req, res) => {
       const newCraft = req.body;
       const result = await craftCollection.insertOne(newCraft);
+      res.send(result);
+    });
+
+    app.post("/feedback", async (req, res) => {
+      const newFeedback = req.body;
+      const result = await feedBackCollection.insertOne(newFeedback);
       res.send(result);
     });
 
